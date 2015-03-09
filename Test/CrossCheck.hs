@@ -45,7 +45,6 @@ instance CrossTestable CrossProperty where
 
 instance (Arbitrary a, Show a, CrossTestable prop) => CrossTestable (a -> prop) where
   crossProperty cc f = CrossProperty $ Crossed (lift (pick arbitrary)) >>= crossAssert . toProperty cc . crossProperty cc . f
-  -- CrossProperty . crossAssert . property $ fmap (toProperty cc . crossProperty cc . f) arbitrary
 
 crossFormat :: String -> [String] -> String
 crossFormat s = foldl (\s' (n, a) -> intercalate a $ splitOn ("{" ++ show n ++ "}") s') s . zip [(0::Int)..]
