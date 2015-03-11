@@ -21,5 +21,14 @@ library
                      , mtl
                      , split
                      , transformers
-  -- hs-source-dirs:      
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+test-suite crosscheck-examples
+  type:                exitcode-stdio-1.0
+  build-depends:       QuickCheck
+                     , base >=4.7 && <4.8
+                     , crosscheck
+                     , process
+  main-is:             Example.hs
   default-language:    Haskell2010

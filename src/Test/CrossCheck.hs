@@ -50,8 +50,10 @@ crossFormat :: String -> [String] -> String
 crossFormat s = foldl (\s' (n, a) -> intercalate a $ splitOn ("{" ++ show n ++ "}") s') s . zip [(0::Int)..]
 
 runCross :: CrossPrintable a => String -> a -> Crossed String
-runCross s args = Crossed (asks crossCheckCommand) >>= (\f -> Crossed . lift . run $ f command)
-  where command = crossFormat s $ crossPrint args
+runCross s args = Crossed (asks crossCheckCommand) >>= (\f -> Crossed . lift . run . f $ crossCommand s args)
+
+crossCommand :: CrossPrintable a => String -> a -> String
+crossCommand s = crossFormat s . crossPrint
 
 crossAssert :: Property -> Crossed ()
 crossAssert = Crossed . lift . stop
@@ -59,7 +61,7 @@ crossAssert = Crossed . lift . stop
 toProperty :: CrossCheck -> CrossProperty -> Property
 toProperty cc (CrossProperty (Crossed p)) = monadicIO $ runReaderT p cc
 
-comparePrograms :: CrossPrintable a => String -> String -> a -> CrossProperty
+comparePrograms :: CrossPrintable a => String -> String -> a-> CrossProperty
 comparePrograms a b args = CrossProperty $ do
   a' <- runCross a args
   b' <- runCross b args
